@@ -14,9 +14,16 @@ var dist_x = 80
 var dist_y = 50
 var base_dist = 15
 
+var board_size_x = 50;
+var board_size_y = 50
+
 
 func _ready():
-	create_board(50,50)
+	create_board(board_size_x,board_size_y)
+	
+	var start_system = star_systems_grid[floor(board_size_y/2) ][floor(board_size_x/2)]
+	start_system.make_active()
+	$Camera2D.position = start_system.position
 	
 
 func clear_system_selected():
@@ -33,7 +40,6 @@ func create_board(size_x,size_y):
 			new_system.position = Vector2(base_dist+x*dist_x*2 +dist_x*(y%2),base_dist+y*dist_y*2)
 			new_system.connect('clear_selected',self,'clear_system_selected')
 			
-			new_system.randomize_posytion(dist_x,dist_y)
 			system_line.append(new_system)
 			system_list.append(new_system)
 			
@@ -41,6 +47,7 @@ func create_board(size_x,size_y):
 	
 	update_star_links()
 	for system in system_list:
+		system.make_not_active()
 		add_child(system)
 
 
@@ -48,13 +55,37 @@ func update_star_links():
 	for pos_y in len(star_systems_grid):
 		for pos_x in len(star_systems_grid[pos_y]) -1:
 			var s_link = StarLink.instance()
-			s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y][pos_x+1])
+			var s_sys = star_systems_grid[pos_y][pos_x]
+			var e_sys = star_systems_grid[pos_y][pos_x+1]
+			
+			s_link.set_link(s_sys, e_sys)
+			
+			s_sys.star_link_e =s_link
+			e_sys.star_link_w = s_link
+			
+			s_sys.star_system_e = e_sys
+			e_sys.star_system_w= s_sys
+			
 			add_child(s_link)
 	
 	for pos_y in range(1,len(star_systems_grid)) :
 		for pos_x in len(star_systems_grid[pos_y]):
 			var s_link = StarLink.instance()
+			
+			
 			s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x])
+			if pos_y % 2 == 1:
+				star_systems_grid[pos_y-1][pos_x].star_link_se = s_link
+				star_systems_grid[pos_y][pos_x].star_link_nw =s_link
+				
+				star_systems_grid[pos_y][pos_x].star_system_nw = star_systems_grid[pos_y-1][pos_x]
+				star_systems_grid[pos_y-1][pos_x].star_system_se = star_systems_grid[pos_y][pos_x]
+			else:
+				star_systems_grid[pos_y-1][pos_x].star_link_sw = s_link
+				star_systems_grid[pos_y][pos_x].star_link_ne =s_link
+				
+				star_systems_grid[pos_y][pos_x].star_system_ne = star_systems_grid[pos_y-1][pos_x]
+				star_systems_grid[pos_y-1][pos_x].star_system_sw = star_systems_grid[pos_y][pos_x]
 			add_child(s_link)
 	
 	for pos_y in range(1,len(star_systems_grid)) :
@@ -62,6 +93,13 @@ func update_star_links():
 			if pos_y % 2 == 1:
 				var s_link = StarLink.instance()
 				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x+1])
+				
+				star_systems_grid[pos_y][pos_x].star_link_ne =s_link
+				star_systems_grid[pos_y-1][pos_x+1].star_link_sw = s_link
+				
+				star_systems_grid[pos_y][pos_x].star_system_ne = star_systems_grid[pos_y-1][pos_x+1]
+				star_systems_grid[pos_y-1][pos_x+1].star_system_sw = star_systems_grid[pos_y][pos_x]
+				
 				add_child(s_link)
 
 	for pos_y in range(1,len(star_systems_grid)) :
@@ -69,6 +107,12 @@ func update_star_links():
 			if pos_y % 2 == 0:
 				var s_link = StarLink.instance()
 				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x-1])
+				
+				star_systems_grid[pos_y][pos_x].star_link_nw =s_link
+				star_systems_grid[pos_y-1][pos_x-1].star_link_se = s_link
+				
+				star_systems_grid[pos_y][pos_x].star_system_nw = star_systems_grid[pos_y-1][pos_x-1]
+				star_systems_grid[pos_y-1][pos_x-1].star_system_se = star_systems_grid[pos_y][pos_x]
 				add_child(s_link)
 
 "

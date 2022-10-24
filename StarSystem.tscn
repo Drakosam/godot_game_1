@@ -5,7 +5,22 @@ script/source = "extends Area2D
 
 var system_name = \"no_name\"
 var is_selcted = false
+var is_active = false
 var rng = RandomNumberGenerator.new()
+
+var star_link_nw = null
+var star_link_ne = null
+var star_link_e = null
+var star_link_w = null
+var star_link_sw = null
+var star_link_se = null
+
+var star_system_nw = null
+var star_system_ne = null
+var star_system_e = null
+var star_system_w = null
+var star_system_sw = null
+var star_system_se = null
 
 var system_size = 17
 
@@ -13,16 +28,59 @@ signal clear_selected()
 
 func _ready():
 	$CollisionShape2D.shape.radius = system_size
-
+		
 
 func _draw():
+	if not is_active:
+		draw_circle(Vector2(0,0),system_size,Color('#000000'))
+		return
+		
 	if is_selcted:
 		draw_circle(Vector2(0,0),system_size,Color('#ff0000'))
 	else:
 		draw_circle(Vector2(0,0),system_size,Color('#ffffff'))
 	
+
+func make_active():
+	is_active = true
+	visible = true
 	
+	print(star_system_e,star_system_w)
+	
+	if star_system_nw and star_system_nw.is_active:
+		star_link_nw.visible = true
+	
+	if star_system_ne and star_system_ne.is_active:
+		star_link_ne.visible = true
 		
+	if star_system_e and star_system_e.is_active:
+		star_link_e.visible = true
+	
+	if star_system_w and star_system_w.is_active:
+		star_link_w.visible = true
+	
+	if star_system_se and star_system_se.is_active:
+		star_link_se.visible = true
+		
+	if star_system_sw and star_system_sw.is_active:
+		star_link_sw.visible = true
+	update()
+	
+func make_not_active():
+	visible = false
+	if star_link_nw:
+		star_link_nw.visible = false
+	if star_link_ne:
+		star_link_ne.visible = false
+	if star_link_e:
+		star_link_e.visible = false
+	if star_link_w:
+		star_link_w.visible = false
+	if star_link_se:
+		star_link_se.visible = false
+	if star_link_sw:
+		star_link_sw.visible = false
+
 func deselect_system():
 		is_selcted = false
 		update()
