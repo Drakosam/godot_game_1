@@ -1,0 +1,101 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+
+var StarSystam = preload(\"res://StarSystem.tscn\")
+var StarLink = preload(\"res://StarLink.tscn\")
+
+var system_list = []
+var star_systems_grid=[]
+
+var dist_x = 80
+var dist_y = 50
+var base_dist = 15
+
+
+func _ready():
+	create_board(50,50)
+	
+
+func clear_system_selected():
+	for system in system_list:
+		system.deselect_system()
+		
+
+func create_board(size_x,size_y):
+	for y in size_y:
+		var system_line = []
+		for x in size_x:
+			var new_system = StarSystam.instance()
+
+			new_system.position = Vector2(base_dist+x*dist_x*2 +dist_x*(y%2),base_dist+y*dist_y*2)
+			new_system.connect('clear_selected',self,'clear_system_selected')
+			
+			new_system.randomize_posytion(dist_x,dist_y)
+			system_line.append(new_system)
+			system_list.append(new_system)
+			
+		star_systems_grid.append(system_line)
+	
+	update_star_links()
+	for system in system_list:
+		add_child(system)
+
+
+func update_star_links():
+	for pos_y in len(star_systems_grid):
+		for pos_x in len(star_systems_grid[pos_y]) -1:
+			var s_link = StarLink.instance()
+			s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y][pos_x+1])
+			add_child(s_link)
+	
+	for pos_y in range(1,len(star_systems_grid)) :
+		for pos_x in len(star_systems_grid[pos_y]):
+			var s_link = StarLink.instance()
+			s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x])
+			add_child(s_link)
+	
+	for pos_y in range(1,len(star_systems_grid)) :
+		for pos_x in len(star_systems_grid[pos_y]) -1:
+			if pos_y % 2 == 1:
+				var s_link = StarLink.instance()
+				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x+1])
+				add_child(s_link)
+
+	for pos_y in range(1,len(star_systems_grid)) :
+		for pos_x in range(1,len(star_systems_grid[pos_y])):
+			if pos_y % 2 == 0:
+				var s_link = StarLink.instance()
+				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x-1])
+				add_child(s_link)
+
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Camera2D
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+func _unhandled_input(event):
+	if event is InputEventMouseMotion:
+		if event.button_mask == BUTTON_MASK_MIDDLE:
+			position -= event.relative
+"
+
+[node name="World" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+script = SubResource( 2 )

@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Area2D
+
+var system_name = \"no_name\"
+var is_selcted = false
+var rng = RandomNumberGenerator.new()
+
+var system_size = 17
+
+signal clear_selected()
+
+func _ready():
+	$CollisionShape2D.shape.radius = system_size
+
+
+func _draw():
+	if is_selcted:
+		draw_circle(Vector2(0,0),system_size,Color('#ff0000'))
+	else:
+		draw_circle(Vector2(0,0),system_size,Color('#ffffff'))
+	
+	
+		
+func deselect_system():
+		is_selcted = false
+		update()
+
+func _on_StarSystem_input_event(_viewport, event, _shape_idx):
+	if event is InputEventMouseButton and event.pressed:
+		emit_signal(\"clear_selected\")
+		is_selcted = true
+		update()
+
+func randomize_posytion(dis_x,dis_y):
+	rng.randomize()
+	position.x += rng.randi_range((dis_x-system_size)*(-1), dis_x-system_size)
+	position.y += rng.randi_range((dis_y-system_size)*(-1), dis_y-system_size) 
+
+########## public metods
+func set_name(new_name):
+	system_name = new_name
+"
+
+[sub_resource type="CircleShape2D" id=1]
+
+[node name="StarSystem" type="Area2D"]
+script = SubResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[connection signal="input_event" from="." to="." method="_on_StarSystem_input_event"]
