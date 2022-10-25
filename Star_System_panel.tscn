@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Panel
+
+var current_system = null
+
+
+func _ready():
+	pass # Replace with function body.
+
+func set_system(system):
+	current_system = system
+	reflesh_data()
+
+func reflesh_data():
+	$\"System name\".text = current_system.system_name
+"
+
+[node name="Star_System_panel" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 20.0
+text = "System Name ::"
+valign = 1
+
+[node name="System name" type="Label" parent="."]
+margin_left = 120.0
+margin_right = 40.0
+margin_bottom = 20.0
+text = "xxxx"
+valign = 1

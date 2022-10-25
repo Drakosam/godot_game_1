@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var ship_name = \"ship name\"
+var curent_system = null
+var travel_to_system = null 
+var curent_action = 'idle'
+
+func _ready():
+	pass 
+	
+
+func spown_ship(spown_system, ship_name_in=\"skip_name\"):
+	curent_system = spown_system
+	ship_name = ship_name_in
+	
+
+func move_to_system(target_system):
+	curent_system =target_system
+
+
+func act():
+	if curent_action=='idle':
+		return
+	if curent_action == 'serch_for_star_routs':
+		if curent_system:
+			curent_system.system_discaver()
+			print(curent_system.link_known)
+			if curent_system.link_known>5:
+				set_ship_action_to_idle()
+
+
+func set_ship_action_to_idle():
+	curent_action = 'idle'
+
+
+func set_ship_action_to_serch_for_star_routs():
+	curent_action = 'serch_for_star_routs'
+"
+
+[node name="ShipAktor" type="Node"]
+script = SubResource( 1 )

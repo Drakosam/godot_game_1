@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Panel
+
+var current_ship
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+func set_ship(ship):
+	current_ship = ship
+	
+func serch_for_star_rutes():
+	current_ship.set_ship_action_to_serch_for_star_routs()
+	
+func go_idle():
+	current_ship.set_ship_action_to_idle()
+
+"
+
+[node name="Ship_panel" type="Panel"]
+margin_right = 639.0
+margin_bottom = 546.0
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Ship Name"
+
+[node name="Locatiom" type="Label" parent="."]
+margin_top = 20.0
+margin_right = 40.0
+margin_bottom = 14.0
+text = "Ship Location"
+
+[node name="Button" type="Button" parent="."]
+margin_top = 40.0
+margin_right = 100.0
+margin_bottom = 60.0
+text = "Serch for star "
+
+[node name="Button2" type="Button" parent="."]
+margin_top = 60.0
+margin_right = 12.0
+margin_bottom = 20.0
+text = "go idle"
+
+[connection signal="pressed" from="Button" to="." method="serch_for_star_rutes"]
+[connection signal="pressed" from="Button2" to="." method="go_idle"]

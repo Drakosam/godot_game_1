@@ -4,6 +4,7 @@
 script/source = "extends Area2D
 
 var system_name = \"no_name\"
+var rand_string = \"abcdefghijklmnopqrstuvwxyz1234567890\".to_upper()
 var is_selcted = false
 var is_active = false
 var rng = RandomNumberGenerator.new()
@@ -23,12 +24,21 @@ var star_system_sw = null
 var star_system_se = null
 
 var system_size = 17
+var link_known = 0
 
 signal clear_selected()
+signal system_selected(system)
 
 func _ready():
 	$CollisionShape2D.shape.radius = system_size
-		
+	system_name = generate_word(rand_string,4)+\"-\"+generate_word(rand_string,4)
+	system_name += \"-\"+generate_word(rand_string,3)
+func generate_word(chars, length):
+	var word: String
+	var n_char = len(chars)
+	for i in range(length):
+		word += chars[randi()% n_char]
+	return word
 
 func _draw():
 	if not is_active:
@@ -39,33 +49,70 @@ func _draw():
 		draw_circle(Vector2(0,0),system_size,Color('#ff0000'))
 	else:
 		draw_circle(Vector2(0,0),system_size,Color('#ffffff'))
+
+
+func _on_StarSystem_input_event(_viewport, event, _shape_idx):
+	if event is InputEventMouseButton and event.pressed:
+		select_system()
+
+
+func _update_system_conection(star_system,star_link):
+	if star_system:
+		if not star_system.is_active:
+			star_link.visible = true
+			star_system.make_active()
+			star_system.link_known+=1
+			self.link_known+=1
+		elif star_system.is_active and star_link.visible == false:
+			star_link.visible = true
+			self.link_known+=1
+			star_system.link_known+=1
+
+
+########## public metods
+func select_system():
+	emit_signal(\"clear_selected\")
+	is_selcted = true
+	update()
+	emit_signal(\"system_selected\",self)
+
+
+func set_name(new_name):
+	system_name = new_name
+
+
+func system_discaver():
+	if link_known > 5:
+		return
 	
+	rng.randomize()
+	var xxx = rng.randi_range(0,500)
+
+	if xxx <5:
+		_update_system_conection(star_system_nw, star_link_nw)
+	elif 4< xxx and xxx <10:
+		_update_system_conection(star_system_ne, star_link_ne)
+	elif 9<xxx and xxx <15:
+		_update_system_conection(star_system_w, star_link_w)
+	elif 14<xxx and xxx <20:
+		_update_system_conection(star_system_e, star_link_e)
+	elif 19<xxx and xxx <25:
+		_update_system_conection(star_system_sw, star_link_sw)
+	elif 24<xxx and xxx <30:
+		_update_system_conection(star_system_se, star_link_se)
+
+
+func act():
+	if not is_active:
+		return
+
 
 func make_active():
 	is_active = true
 	visible = true
-	
-	print(star_system_e,star_system_w)
-	
-	if star_system_nw and star_system_nw.is_active:
-		star_link_nw.visible = true
-	
-	if star_system_ne and star_system_ne.is_active:
-		star_link_ne.visible = true
-		
-	if star_system_e and star_system_e.is_active:
-		star_link_e.visible = true
-	
-	if star_system_w and star_system_w.is_active:
-		star_link_w.visible = true
-	
-	if star_system_se and star_system_se.is_active:
-		star_link_se.visible = true
-		
-	if star_system_sw and star_system_sw.is_active:
-		star_link_sw.visible = true
 	update()
-	
+
+
 func make_not_active():
 	visible = false
 	if star_link_nw:
@@ -81,24 +128,16 @@ func make_not_active():
 	if star_link_sw:
 		star_link_sw.visible = false
 
+
 func deselect_system():
 		is_selcted = false
 		update()
 
-func _on_StarSystem_input_event(_viewport, event, _shape_idx):
-	if event is InputEventMouseButton and event.pressed:
-		emit_signal(\"clear_selected\")
-		is_selcted = true
-		update()
 
 func randomize_posytion(dis_x,dis_y):
 	rng.randomize()
 	position.x += rng.randi_range((dis_x-system_size)*(-1), dis_x-system_size)
 	position.y += rng.randi_range((dis_y-system_size)*(-1), dis_y-system_size) 
-
-########## public metods
-func set_name(new_name):
-	system_name = new_name
 "
 
 [sub_resource type="CircleShape2D" id=1]
