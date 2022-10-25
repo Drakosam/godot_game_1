@@ -44,7 +44,7 @@ func _draw():
 	if not is_active:
 		draw_circle(Vector2(0,0),system_size,Color('#000000'))
 		return
-		
+
 	if is_selcted:
 		draw_circle(Vector2(0,0),system_size,Color('#ff0000'))
 	else:
@@ -84,7 +84,7 @@ func set_name(new_name):
 func system_discaver():
 	if link_known > 5:
 		return
-	
+
 	rng.randomize()
 	var xxx = rng.randi_range(0,500)
 
@@ -137,7 +137,7 @@ func deselect_system():
 func randomize_posytion(dis_x,dis_y):
 	rng.randomize()
 	position.x += rng.randi_range((dis_x-system_size)*(-1), dis_x-system_size)
-	position.y += rng.randi_range((dis_y-system_size)*(-1), dis_y-system_size) 
+	position.y += rng.randi_range((dis_y-system_size)*(-1), dis_y-system_size)
 "
 
 [sub_resource type="CircleShape2D" id=1]
