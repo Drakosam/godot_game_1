@@ -7,7 +7,7 @@ var current_ship
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$VBoxContainer/MovmendTab.visible = false
+	_on_ActionButton_pressed()
 
 
 func set_ship(ship):
@@ -43,6 +43,8 @@ func go_idle():
 func _hide_all_tabs():
 	$VBoxContainer/MovmendTab.visible = false
 	$VBoxContainer/ActionTab.visible = false
+	$VBoxContainer/InfoTab.visible = false
+	$VBoxContainer/SettingsTab.visible = false
 
 
 func _on_ActionButton_pressed():
@@ -53,6 +55,16 @@ func _on_ActionButton_pressed():
 func _on_MovmentButton_pressed():
 	_hide_all_tabs()
 	$VBoxContainer/MovmendTab.visible = true
+
+
+func _on_Info_pressed():
+	_hide_all_tabs()
+	$VBoxContainer/InfoTab.visible = true
+
+
+func _on_Settings_pressed():
+	_hide_all_tabs()
+	$VBoxContainer/SettingsTab.visible = true
 
 
 func _refresh_ship_data():
@@ -144,6 +156,7 @@ func _refresh_buttons():
 	$VBoxContainer/MovmendTab/VBoxContainer/Move_E.text = data['E'][1]
 	$VBoxContainer/MovmendTab/VBoxContainer/Move_SW.text = data['SW'][1]
 	$VBoxContainer/MovmendTab/VBoxContainer/Move_SE.text = data['SE'][1]
+
 "
 
 [node name="Ship_panel" type="Panel"]
@@ -237,16 +250,34 @@ margin_bottom = 20.0
 size_flags_horizontal = 3
 text = "Movment"
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer"]
 margin_top = 90.0
 margin_right = 629.0
 margin_bottom = 110.0
+
+[node name="Info" type="Button" parent="VBoxContainer/HBoxContainer5"]
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Info"
+
+[node name="Settings" type="Button" parent="VBoxContainer/HBoxContainer5"]
+margin_left = 316.0
+margin_right = 629.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Settings"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 114.0
+margin_right = 629.0
+margin_bottom = 134.0
 rect_min_size = Vector2( 0, 20 )
 
 [node name="MovmendTab" type="Panel" parent="VBoxContainer"]
-margin_top = 114.0
+margin_top = 138.0
 margin_right = 629.0
-margin_bottom = 550.0
+margin_bottom = 348.0
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MovmendTab"]
@@ -256,38 +287,42 @@ anchor_bottom = 1.0
 [node name="Move_NW" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_right = 629.0
 margin_bottom = 20.0
-text = "move 1"
+text = "move NW"
 
 [node name="Move_NE" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_top = 24.0
 margin_right = 629.0
 margin_bottom = 44.0
-text = "move 2"
+text = "move NE"
 
 [node name="Move_W" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_top = 48.0
 margin_right = 629.0
 margin_bottom = 68.0
+text = "move W"
 
 [node name="Move_E" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_top = 72.0
 margin_right = 629.0
 margin_bottom = 92.0
+text = "move E"
 
 [node name="Move_SW" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_top = 96.0
 margin_right = 629.0
 margin_bottom = 116.0
+text = "move SW"
 
 [node name="Move_SE" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
 margin_top = 120.0
 margin_right = 629.0
 margin_bottom = 140.0
+text = "move SE"
 
 [node name="ActionTab" type="Panel" parent="VBoxContainer"]
-margin_top = 554.0
+margin_top = 352.0
 margin_right = 629.0
-margin_bottom = 990.0
+margin_bottom = 562.0
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ActionTab"]
@@ -307,12 +342,26 @@ margin_bottom = 44.0
 rect_min_size = Vector2( 0, 20 )
 text = "Serch for star link "
 
+[node name="InfoTab" type="Panel" parent="VBoxContainer"]
+margin_top = 566.0
+margin_right = 629.0
+margin_bottom = 776.0
+size_flags_vertical = 3
+
+[node name="SettingsTab" type="Panel" parent="VBoxContainer"]
+margin_top = 780.0
+margin_right = 629.0
+margin_bottom = 990.0
+size_flags_vertical = 3
+
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer3/ActionButton" to="." method="_on_ActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer3/MovmentButton" to="." method="_on_MovmentButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer5/Info" to="." method="_on_Info_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer5/Settings" to="." method="_on_Settings_pressed"]
 [connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_on_Move_NW_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_cler_paths"]
 [connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_on_Move_NW_pressed"]

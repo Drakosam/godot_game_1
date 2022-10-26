@@ -90,8 +90,8 @@ func clear_all_paths():
 		star_link_se.unmark_path()
 	if star_link_sw:
 		star_link_sw.unmark_path()
-		
-		
+
+
 func mark_path(path_name):
 	if star_link_nw and path_name==\"NW\":
 		star_link_nw.mark_path()
@@ -156,7 +156,7 @@ func make_active():
 
 
 func make_not_active():
-	visible =$Game_Setings.SHOW_HIDE_SYSTEMS
+	visible =not $Game_Setings.HIDE_INACTIVE_SYSTEMS
 	if star_link_nw:
 		star_link_nw.visible = false
 		max_links += 1
@@ -180,8 +180,7 @@ func make_not_active():
 	if star_link_sw:
 		star_link_sw.visible = false
 		max_links += 1
-	
-	print(max_links)
+
 
 func deselect_system():
 	is_selcted = false
@@ -216,7 +215,6 @@ func get_visible_paths():
 		visible_paths[\"W\"] = [star_link_w.visible, star_system_w.system_name]
 	else:
 		visible_paths[\"W\"] = [false,\"xxxx\"]
-
 
 	if star_link_sw:
 		visible_paths[\"SW\"] = [star_link_sw.visible, star_system_se.system_name]
