@@ -9,12 +9,14 @@ var current_system = null
 func _ready():
 	pass # Replace with function body.
 
+
 func set_system(system):
 	current_system = system
 	reflesh_data()
 
+
 func reflesh_data():
-	$\"System name\".text = current_system.system_name
+	$System_name.text = current_system.system_name
 "
 
 [node name="Star_System_panel" type="Panel"]
@@ -28,7 +30,7 @@ margin_bottom = 20.0
 text = "System Name ::"
 valign = 1
 
-[node name="System name" type="Label" parent="."]
+[node name="System_name" type="Label" parent="."]
 margin_left = 120.0
 margin_right = 40.0
 margin_bottom = 20.0

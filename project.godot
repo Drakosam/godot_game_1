@@ -14,6 +14,10 @@ config/name="game"
 run/main_scene="res://World.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+GameSetings="*res://Game_Setings.tscn"
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

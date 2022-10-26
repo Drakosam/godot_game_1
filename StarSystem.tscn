@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Game_Setings.tscn" type="PackedScene" id=1]
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Area2D
@@ -25,20 +27,25 @@ var star_system_se = null
 
 var system_size = 17
 var link_known = 0
+var max_links = 0
 
 signal clear_selected()
 signal system_selected(system)
+
 
 func _ready():
 	$CollisionShape2D.shape.radius = system_size
 	system_name = generate_word(rand_string,4)+\"-\"+generate_word(rand_string,4)
 	system_name += \"-\"+generate_word(rand_string,3)
+
+
 func generate_word(chars, length):
-	var word: String
+	var word=\"\"
 	var n_char = len(chars)
-	for i in range(length):
+	for _i in range(length):
 		word += chars[randi()% n_char]
 	return word
+
 
 func _draw():
 	if not is_active:
@@ -70,6 +77,41 @@ func _update_system_conection(star_system,star_link):
 
 
 ########## public metods
+func clear_all_paths():
+	if star_link_nw:
+		star_link_nw.unmark_path()
+	if star_link_ne:
+		star_link_ne.unmark_path()
+	if star_link_e:
+		star_link_e.unmark_path()
+	if star_link_w:
+		star_link_w.unmark_path()
+	if star_link_se:
+		star_link_se.unmark_path()
+	if star_link_sw:
+		star_link_sw.unmark_path()
+		
+		
+func mark_path(path_name):
+	if star_link_nw and path_name==\"NW\":
+		star_link_nw.mark_path()
+	
+	if star_link_ne and path_name==\"NE\":
+		star_link_ne.mark_path()
+	
+	if star_link_e and path_name==\"E\":
+		star_link_e.mark_path()
+	
+	if star_link_w and path_name==\"W\":
+		star_link_w.mark_path()
+	
+	if star_link_se and path_name==\"SE\":
+		star_link_se.mark_path()
+		
+	if star_link_sw and path_name==\"SW\":
+		star_link_sw.mark_path()
+
+
 func select_system():
 	emit_signal(\"clear_selected\")
 	is_selcted = true
@@ -82,7 +124,7 @@ func set_name(new_name):
 
 
 func system_discaver():
-	if link_known > 5:
+	if link_known >= max_links:
 		return
 	
 	rng.randomize()
@@ -114,36 +156,87 @@ func make_active():
 
 
 func make_not_active():
-	visible = false
+	visible =$Game_Setings.SHOW_HIDE_SYSTEMS
 	if star_link_nw:
 		star_link_nw.visible = false
+		max_links += 1
+	
 	if star_link_ne:
 		star_link_ne.visible = false
+		max_links += 1
+	
 	if star_link_e:
 		star_link_e.visible = false
+		max_links += 1
+	
 	if star_link_w:
 		star_link_w.visible = false
+		max_links += 1
+	
 	if star_link_se:
 		star_link_se.visible = false
+		max_links += 1
+		
 	if star_link_sw:
 		star_link_sw.visible = false
-
+		max_links += 1
+	
+	print(max_links)
 
 func deselect_system():
-		is_selcted = false
-		update()
+	is_selcted = false
+	update()
 
 
 func randomize_posytion(dis_x,dis_y):
 	rng.randomize()
 	position.x += rng.randi_range((dis_x-system_size)*(-1), dis_x-system_size)
 	position.y += rng.randi_range((dis_y-system_size)*(-1), dis_y-system_size) 
+
+
+func get_visible_paths():
+	var visible_paths = {}
+
+	if star_link_nw:
+		visible_paths[\"NW\"] = [star_link_nw.visible, star_system_nw.system_name]
+	else:
+		visible_paths[\"NW\"] = [false,\"xxxx\"]
+
+	if star_link_ne:
+		visible_paths[\"NE\"] = [star_link_ne.visible, star_system_ne.system_name]
+	else:
+		visible_paths[\"NE\"] = [false,\"xxxx\"]
+
+	if star_link_e:
+		visible_paths[\"E\"] = [star_link_e.visible, star_system_w.system_name]
+	else:
+		visible_paths[\"E\"] = [false,\"xxxx\"]
+
+	if star_link_w:
+		visible_paths[\"W\"] = [star_link_w.visible, star_system_w.system_name]
+	else:
+		visible_paths[\"W\"] = [false,\"xxxx\"]
+
+
+	if star_link_sw:
+		visible_paths[\"SW\"] = [star_link_sw.visible, star_system_se.system_name]
+	else:
+		visible_paths[\"SW\"] = [false,\"xxxx\"]
+		
+	if star_link_se:
+		visible_paths[\"SE\"] = [star_link_se.visible, star_system_sw.system_name]
+	else:
+		visible_paths[\"SE\"] = [false,\"xxxx\"]
+	
+	return visible_paths
 "
 
 [sub_resource type="CircleShape2D" id=1]
 
 [node name="StarSystem" type="Area2D"]
 script = SubResource( 2 )
+
+[node name="Game_Setings" parent="." instance=ExtResource( 1 )]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )

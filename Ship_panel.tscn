@@ -7,47 +7,330 @@ var current_ship
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$VBoxContainer/MovmendTab.visible = false
 
 
 func set_ship(ship):
-	current_ship = ship
+	if current_ship:
+		current_ship.clear_status()
+		
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NW.visible = false
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NE.visible = false
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_W.visible = false
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_E.visible = false
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SW.visible = false
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SE.visible = false
 	
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NW.text = \"\"
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NE.text = \"\"
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_W.text = \"\"
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_E.text = \"\"
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SW.text = \"\"
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SE.text = \"\"
+	
+	current_ship = ship
+	_refresh_ship_data()
+
+
 func serch_for_star_rutes():
 	current_ship.set_ship_action_to_serch_for_star_routs()
-	
+
+
 func go_idle():
 	current_ship.set_ship_action_to_idle()
 
+
+func _hide_all_tabs():
+	$VBoxContainer/MovmendTab.visible = false
+	$VBoxContainer/ActionTab.visible = false
+
+
+func _on_ActionButton_pressed():
+	_hide_all_tabs()
+	$VBoxContainer/ActionTab.visible = true
+
+
+func _on_MovmentButton_pressed():
+	_hide_all_tabs()
+	$VBoxContainer/MovmendTab.visible = true
+
+
+func _refresh_ship_data():
+	$VBoxContainer/HBoxContainer/Ship_name.text = \":: \" + current_ship.ship_name
+	$VBoxContainer/HBoxContainer2/Ship_location.text =\":: \" + current_ship.get_system_name()
+	$VBoxContainer/HBoxContainer4/Activity.text = \":: \" + current_ship.curent_action
+	_refresh_buttons()
+
+
+#---------------------- NW
+func _on_Move_NW_pressed():
+	current_ship.move_to_system('NW')
+
+
+func _on_Move_NW_mouse_entered():
+	current_ship.mark_path('NW')
+
+
+#---------------------- NE
+func _on_Move_NE_pressed():
+	current_ship.move_to_system('NE')
+
+
+func _on_Move_NE_mouse_entered():
+	current_ship.mark_path('NE')
+
+
+#---------------------- W
+func _on_Move_W_pressed():
+	current_ship.move_to_system('W')
+
+
+func _on_Move_W_mouse_entered():
+	current_ship.mark_path('W')
+
+
+#---------------------- E
+func _on_Move_E_pressed():
+	current_ship.move_to_system('E')
+
+
+func _on_Move_E_mouse_entered():
+	current_ship.mark_path('E')
+
+
+#---------------------- SW
+func _on_Move_SW_pressed():
+	current_ship.move_to_system('SW')
+
+
+func _on_Move_SW_mouse_entered():
+	current_ship.mark_path('SW')
+
+
+#---------------------- SE
+func _on_Move_SE_pressed():
+	current_ship.move_to_system('SE')
+
+
+func _on_Move_SE_mouse_entered():
+	current_ship.mark_path('SE')
+
+
+#-------------------------------- cler mark path
+func _cler_paths():
+	if current_ship:
+		current_ship.clear_paths()
+
+
+#-------------------------------- timers
+func _on_Timer_timeout():
+	_refresh_ship_data()
+
+
+func _refresh_buttons():
+	var data = current_ship.get_system_visible_paths()
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NW.visible = data['NW'][0]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NE.visible = data['NE'][0]
+	
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_E.visible = data['E'][0]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_W.visible = data['W'][0]
+	
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SW.visible = data['SW'][0]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SE.visible = data['SE'][0]
+	
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NW.text = data['NW'][1]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_NE.text = data['NE'][1]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_W.text = data['W'][1]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_E.text = data['E'][1]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SW.text = data['SW'][1]
+	$VBoxContainer/MovmendTab/VBoxContainer/Move_SE.text = data['SE'][1]
 "
 
 [node name="Ship_panel" type="Panel"]
 margin_right = 639.0
-margin_bottom = 546.0
+margin_bottom = 1000.0
 script = SubResource( 1 )
 
-[node name="Label" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
-text = "Ship Name"
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
 
-[node name="Locatiom" type="Label" parent="."]
-margin_top = 20.0
-margin_right = 40.0
-margin_bottom = 14.0
-text = "Ship Location"
-
-[node name="Button" type="Button" parent="."]
-margin_top = 40.0
-margin_right = 100.0
-margin_bottom = 60.0
-text = "Serch for star "
-
-[node name="Button2" type="Button" parent="."]
-margin_top = 60.0
-margin_right = 12.0
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 629.0
 margin_bottom = 20.0
-text = "go idle"
+rect_min_size = Vector2( 0, 20 )
 
-[connection signal="pressed" from="Button" to="." method="serch_for_star_rutes"]
-[connection signal="pressed" from="Button2" to="." method="go_idle"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_top = 3.0
+margin_right = 100.0
+margin_bottom = 17.0
+rect_min_size = Vector2( 100, 0 )
+text = "Ship Name"
+valign = 1
+
+[node name="Ship_name" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_left = 104.0
+margin_top = 3.0
+margin_right = 144.0
+margin_bottom = 17.0
+text = ":: xxxx"
+valign = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 24.0
+margin_right = 629.0
+margin_bottom = 44.0
+rect_min_size = Vector2( 0, 20 )
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2"]
+margin_top = 3.0
+margin_right = 100.0
+margin_bottom = 17.0
+rect_min_size = Vector2( 100, 0 )
+text = "Ship Location"
+valign = 1
+
+[node name="Ship_location" type="Label" parent="VBoxContainer/HBoxContainer2"]
+margin_left = 104.0
+margin_top = 3.0
+margin_right = 144.0
+margin_bottom = 17.0
+text = ":: xxxx"
+valign = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 48.0
+margin_right = 629.0
+margin_bottom = 62.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer4"]
+margin_right = 100.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 100, 0 )
+text = "Activity"
+
+[node name="Activity" type="Label" parent="VBoxContainer/HBoxContainer4"]
+margin_left = 104.0
+margin_right = 151.0
+margin_bottom = 14.0
+text = ":: xxxxx"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 66.0
+margin_right = 629.0
+margin_bottom = 86.0
+
+[node name="ActionButton" type="Button" parent="VBoxContainer/HBoxContainer3"]
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Actions"
+
+[node name="MovmentButton" type="Button" parent="VBoxContainer/HBoxContainer3"]
+margin_left = 316.0
+margin_right = 629.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Movment"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 90.0
+margin_right = 629.0
+margin_bottom = 110.0
+rect_min_size = Vector2( 0, 20 )
+
+[node name="MovmendTab" type="Panel" parent="VBoxContainer"]
+margin_top = 114.0
+margin_right = 629.0
+margin_bottom = 550.0
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MovmendTab"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Move_NW" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_right = 629.0
+margin_bottom = 20.0
+text = "move 1"
+
+[node name="Move_NE" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_top = 24.0
+margin_right = 629.0
+margin_bottom = 44.0
+text = "move 2"
+
+[node name="Move_W" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_top = 48.0
+margin_right = 629.0
+margin_bottom = 68.0
+
+[node name="Move_E" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_top = 72.0
+margin_right = 629.0
+margin_bottom = 92.0
+
+[node name="Move_SW" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_top = 96.0
+margin_right = 629.0
+margin_bottom = 116.0
+
+[node name="Move_SE" type="Button" parent="VBoxContainer/MovmendTab/VBoxContainer"]
+margin_top = 120.0
+margin_right = 629.0
+margin_bottom = 140.0
+
+[node name="ActionTab" type="Panel" parent="VBoxContainer"]
+margin_top = 554.0
+margin_right = 629.0
+margin_bottom = 990.0
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ActionTab"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Button2" type="Button" parent="VBoxContainer/ActionTab/VBoxContainer"]
+margin_right = 629.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 0, 20 )
+text = "Go idle"
+
+[node name="Button" type="Button" parent="VBoxContainer/ActionTab/VBoxContainer"]
+margin_top = 24.0
+margin_right = 629.0
+margin_bottom = 44.0
+rect_min_size = Vector2( 0, 20 )
+text = "Serch for star link "
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer3/ActionButton" to="." method="_on_ActionButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer3/MovmentButton" to="." method="_on_MovmentButton_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_on_Move_NW_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NW" to="." method="_on_Move_NW_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NE" to="." method="_on_Move_NE_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NE" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_NE" to="." method="_on_Move_NE_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_W" to="." method="_on_Move_W_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_W" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_W" to="." method="_on_Move_W_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_E" to="." method="_on_Move_E_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_E" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_E" to="." method="_on_Move_E_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SW" to="." method="_on_Move_SW_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SW" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SW" to="." method="_on_Move_SW_pressed"]
+[connection signal="mouse_entered" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SE" to="." method="_on_Move_SE_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SE" to="." method="_cler_paths"]
+[connection signal="pressed" from="VBoxContainer/MovmendTab/VBoxContainer/Move_SE" to="." method="_on_Move_SE_pressed"]
+[connection signal="pressed" from="VBoxContainer/ActionTab/VBoxContainer/Button2" to="." method="go_idle"]
+[connection signal="pressed" from="VBoxContainer/ActionTab/VBoxContainer/Button" to="." method="serch_for_star_rutes"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

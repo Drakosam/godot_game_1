@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var SIZE_X = 5
+var SIZE_Y = 5
+
+var SHOW_HIDE_SYSTEMS = true
+var RANDOMIZE_SYSTEM_POSYTION = false
+
+
+func _ready():
+	pass # Replace with function body.
+
+"
+
+[node name="Game_Setings" type="Node"]
+script = SubResource( 1 )
