@@ -33,6 +33,7 @@ signal clear_selected()
 signal system_selected(system)
 
 
+
 func _ready():
 	$CollisionShape2D.shape.radius = system_size
 	system_name = generate_word(rand_string,4)+\"-\"+generate_word(rand_string,4)

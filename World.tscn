@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Ship_panel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Star_System_panel.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Game_Setings.tscn" type="PackedScene" id=3]
+[ext_resource path="res://StarSystemsMap.tscn" type="PackedScene" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -28,135 +29,26 @@ func _ready():
 	board_size_x = $Game_Setings.SIZE_X
 	board_size_y = $Game_Setings.SIZE_Y
 	
-	create_board(board_size_x,board_size_y)
+	$StarSystemsMap.create_board(board_size_x,board_size_y)
+	#create_board(board_size_x,board_size_y)
+	
+	system_list = $StarSystemsMap.get_star_list()
+	star_systems_grid = $StarSystemsMap.get_star_grid()
 	
 	var start_system = star_systems_grid[floor(board_size_y/2) ][floor(board_size_x/2)]
 	start_system.make_active()
 	$Camera2D.position = start_system.position
+	start_system.select_system()
 	
 	var new_ship = ShipAktor.instance()
 	ship_list.append(new_ship)
 	new_ship.spown_ship(start_system,'start ship')
 	
-	start_system.select_system()
 	
-	$CanvasLayer/Panel/Ship_panel.set_ship(new_ship)
-	$CanvasLayer/Panel/MenuButton.get_popup().add_item(\"Star System\")
-	$CanvasLayer/Panel/MenuButton.get_popup().add_item(\"Ships\")
-	$CanvasLayer/Panel/MenuButton.get_popup().connect(\"index_pressed\",self,'_pick_options')
-
-
-func _pick_options(option):
-	if option == 0:
-		_hide_panels()
-		$CanvasLayer/Panel/MenuButton.text = \"Star System ▼▼▼ \\\\/\\\\/\\\\/\"
-		$CanvasLayer/Panel/Star_System_panel.visible = true
-	elif option ==1:
-		_hide_panels()
-		$CanvasLayer/Panel/MenuButton.text = \"Ships ▼▼▼ \\\\/\\\\/\\\\/\"
-		$CanvasLayer/Panel/Ship_panel.visible = true
-		
 func _hide_panels():
 	$CanvasLayer/Panel/Star_System_panel.visible = false
 	$CanvasLayer/Panel/Ship_panel.visible = false
-	
-
-func clear_system_selected():
-	for system in system_list:
-		system.deselect_system()
-
-
-func system_selected(system):
-	$CanvasLayer/Panel/Star_System_panel.set_system(system)
-
-
-func create_board(size_x,size_y):
-	for y in size_y:
-		var system_line = []
-		for x in size_x:
-			var new_system = StarSystam.instance()
-
-			new_system.position = Vector2(base_dist+x*dist_x*2 +dist_x*(y%2),base_dist+y*dist_y*2)
-			new_system.connect('clear_selected',self,'clear_system_selected')
-			new_system.connect('system_selected',self,'system_selected')
-			
-			if $Game_Setings.RANDOMIZE_SYSTEM_POSYTION:
-				new_system.randomize_posytion(dist_x, dist_y)
-			
-			system_line.append(new_system)
-			system_list.append(new_system)
-			
-		star_systems_grid.append(system_line)
-	
-	update_star_links()
-	for system in system_list:
-		system.make_not_active()
-		add_child(system)
-
-
-func update_star_links():
-	for pos_y in len(star_systems_grid):
-		for pos_x in len(star_systems_grid[pos_y]) -1:
-			var s_link = StarLink.instance()
-			var s_sys = star_systems_grid[pos_y][pos_x]
-			var e_sys = star_systems_grid[pos_y][pos_x+1]
-			
-			s_link.set_link(s_sys, e_sys)
-			
-			s_sys.star_link_e =s_link
-			e_sys.star_link_w = s_link
-			
-			s_sys.star_system_e = e_sys
-			e_sys.star_system_w= s_sys
-			
-			add_child(s_link)
-	
-	for pos_y in range(1,len(star_systems_grid)) :
-		for pos_x in len(star_systems_grid[pos_y]):
-			var s_link = StarLink.instance()
-			
-			
-			s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x])
-			if pos_y % 2 == 1:
-				star_systems_grid[pos_y-1][pos_x].star_link_se = s_link
-				star_systems_grid[pos_y][pos_x].star_link_nw =s_link
-				
-				star_systems_grid[pos_y][pos_x].star_system_nw = star_systems_grid[pos_y-1][pos_x]
-				star_systems_grid[pos_y-1][pos_x].star_system_se = star_systems_grid[pos_y][pos_x]
-			else:
-				star_systems_grid[pos_y-1][pos_x].star_link_sw = s_link
-				star_systems_grid[pos_y][pos_x].star_link_ne =s_link
-				
-				star_systems_grid[pos_y][pos_x].star_system_ne = star_systems_grid[pos_y-1][pos_x]
-				star_systems_grid[pos_y-1][pos_x].star_system_sw = star_systems_grid[pos_y][pos_x]
-			add_child(s_link)
-	
-	for pos_y in range(1,len(star_systems_grid)) :
-		for pos_x in len(star_systems_grid[pos_y]) -1:
-			if pos_y % 2 == 1:
-				var s_link = StarLink.instance()
-				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x+1])
-				
-				star_systems_grid[pos_y][pos_x].star_link_ne =s_link
-				star_systems_grid[pos_y-1][pos_x+1].star_link_sw = s_link
-				
-				star_systems_grid[pos_y][pos_x].star_system_ne = star_systems_grid[pos_y-1][pos_x+1]
-				star_systems_grid[pos_y-1][pos_x+1].star_system_sw = star_systems_grid[pos_y][pos_x]
-				
-				add_child(s_link)
-
-	for pos_y in range(1,len(star_systems_grid)) :
-		for pos_x in range(1,len(star_systems_grid[pos_y])):
-			if pos_y % 2 == 0:
-				var s_link = StarLink.instance()
-				s_link.set_link(star_systems_grid[pos_y][pos_x],star_systems_grid[pos_y-1][pos_x-1])
-				
-				star_systems_grid[pos_y][pos_x].star_link_nw =s_link
-				star_systems_grid[pos_y-1][pos_x-1].star_link_se = s_link
-				
-				star_systems_grid[pos_y][pos_x].star_system_nw = star_systems_grid[pos_y-1][pos_x-1]
-				star_systems_grid[pos_y-1][pos_x-1].star_system_se = star_systems_grid[pos_y][pos_x]
-				add_child(s_link)
+	$StarSystemsMap.visible = false
 
 
 func _on_Timer_timeout():
@@ -165,6 +57,23 @@ func _on_Timer_timeout():
 	
 	for ship in ship_list:
 		ship.act()
+
+
+func _on_Sys_but_pressed():
+	_hide_panels()
+	$CanvasLayer/Panel/Star_System_panel.visible = true
+	$StarSystemsMap.visible = true
+
+func _on_Ship_but_pressed():
+	_hide_panels()
+	$CanvasLayer/Panel/Ship_panel.visible = true
+	if ship_list.size()>0:
+		$CanvasLayer/Panel/Ship_panel.set_ship(ship_list[0])
+
+
+func _on_StarSystemsMap_system_selected(system):
+	$CanvasLayer/Panel/Star_System_panel.set_system(system)
+	
 "
 
 [sub_resource type="GDScript" id=2]
@@ -196,35 +105,55 @@ script = SubResource( 1 )
 current = true
 script = SubResource( 2 )
 
+[node name="StarSystemsMap" parent="." instance=ExtResource( 4 )]
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Panel" type="Panel" parent="CanvasLayer"]
-anchor_bottom = 1.0
-margin_right = 300.0
-
-[node name="MenuButton" type="MenuButton" parent="CanvasLayer/Panel"]
+anchor_left = 1.0
 anchor_right = 1.0
-margin_bottom = 30.0
-text = "Star system  ▼▼▼ \\/\\/\\/"
+anchor_bottom = 1.0
+margin_left = -300.0
 
 [node name="Star_System_panel" parent="CanvasLayer/Panel" instance=ExtResource( 2 )]
-margin_top = 40.0
 
 [node name="Ship_panel" parent="CanvasLayer/Panel" instance=ExtResource( 1 )]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 40.0
 margin_right = 0.0
 margin_bottom = 0.0
 
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/Panel"]
+[node name="LeftMenu" type="Panel" parent="CanvasLayer"]
+anchor_bottom = 1.0
+margin_right = 50.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/LeftMenu"]
 anchor_right = 1.0
-margin_top = 30.0
-margin_bottom = 34.0
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = 5.0
+margin_right = -3.0
+margin_bottom = -5.0
+
+[node name="Sys_but" type="Button" parent="CanvasLayer/LeftMenu/VBoxContainer"]
+margin_right = 44.0
+margin_bottom = 44.0
+rect_min_size = Vector2( 0, 44 )
+text = "sys"
+
+[node name="Ship_but" type="Button" parent="CanvasLayer/LeftMenu/VBoxContainer"]
+margin_top = 48.0
+margin_right = 44.0
+margin_bottom = 92.0
+rect_min_size = Vector2( 0, 44 )
+text = "ship"
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
 autostart = true
 
+[connection signal="system_selected" from="StarSystemsMap" to="." method="_on_StarSystemsMap_system_selected"]
+[connection signal="pressed" from="CanvasLayer/LeftMenu/VBoxContainer/Sys_but" to="." method="_on_Sys_but_pressed"]
+[connection signal="pressed" from="CanvasLayer/LeftMenu/VBoxContainer/Ship_but" to="." method="_on_Ship_but_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

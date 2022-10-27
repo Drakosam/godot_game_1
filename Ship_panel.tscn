@@ -68,10 +68,11 @@ func _on_Settings_pressed():
 
 
 func _refresh_ship_data():
-	$VBoxContainer/HBoxContainer/Ship_name.text = \":: \" + current_ship.ship_name
-	$VBoxContainer/HBoxContainer2/Ship_location.text =\":: \" + current_ship.get_system_name()
-	$VBoxContainer/HBoxContainer4/Activity.text = \":: \" + current_ship.curent_action
-	_refresh_buttons()
+	if(current_ship):
+		$VBoxContainer/HBoxContainer/Ship_name.text = \":: \" + current_ship.ship_name
+		$VBoxContainer/HBoxContainer2/Ship_location.text =\":: \" + current_ship.get_system_name()
+		$VBoxContainer/HBoxContainer4/Activity.text = \":: \" + current_ship.curent_action
+		_refresh_buttons()
 
 
 #---------------------- NW
