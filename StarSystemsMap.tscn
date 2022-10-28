@@ -122,7 +122,6 @@ func clear_system_selected():
 
 
 func system_selected(system):
-	print('xxx')
 	emit_signal(\"system_selected\",system)
 "
 
