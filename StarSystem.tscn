@@ -9,6 +9,8 @@ var system_name = \"no_name\"
 var rand_string = \"abcdefghijklmnopqrstuvwxyz1234567890\".to_upper()
 var is_selcted = false
 var is_active = false
+var sys_dif = 500
+
 var rng = RandomNumberGenerator.new()
 
 var star_link_nw = null
@@ -124,26 +126,59 @@ func set_name(new_name):
 	system_name = new_name
 
 
-func system_discaver():
+func system_discaver(_sensor_str = 0):
 	if link_known >= max_links:
 		return
 	
 	rng.randomize()
-	var xxx = rng.randi_range(0,500)
+	var dice = rng.randi_range(0, 500)
+	
+	var dif_test_lvl = $Game_Setings.SYSTEM_BASE_DIF 
+	dif_test_lvl +=  link_known *  $Game_Setings.SYSTEM_NEXT_LINK_DIF_STEP
+	
+	if _sensor_str + dice < dif_test_lvl:
+		return
+	
+	var dis_tab = []
+	
+	if star_link_nw and not star_link_nw.visible:
+		dis_tab.append('NW')
 
-	if xxx <5:
+	if star_link_ne and not  star_link_ne.visible:
+		dis_tab.append('NE')
+
+	if star_link_e and not  star_link_e.visible:
+		dis_tab.append('E')
+
+	if star_link_w and not  star_link_w.visible:
+		dis_tab.append('W')
+
+	if star_link_sw and not  star_link_sw.visible:
+		dis_tab.append('SW')
+		
+	if star_link_se and not  star_link_se.visible:
+		dis_tab.append('SE')
+	
+	
+	
+	rng.randomize()
+	var link_detected = rng.randi_range(0,dis_tab.size()-1)
+	_show_link(dis_tab[link_detected])
+		
+
+func _show_link(link_name):
+	if link_name == 'NW':
 		_update_system_conection(star_system_nw, star_link_nw)
-	elif 4< xxx and xxx <10:
+	if link_name == 'NE':
 		_update_system_conection(star_system_ne, star_link_ne)
-	elif 9<xxx and xxx <15:
+	if link_name == 'W':
 		_update_system_conection(star_system_w, star_link_w)
-	elif 14<xxx and xxx <20:
+	if link_name == 'E':
 		_update_system_conection(star_system_e, star_link_e)
-	elif 19<xxx and xxx <25:
+	if link_name == 'SW':
 		_update_system_conection(star_system_sw, star_link_sw)
-	elif 24<xxx and xxx <30:
+	if link_name == 'SE':
 		_update_system_conection(star_system_se, star_link_se)
-
 
 func act():
 	if not is_active:
@@ -208,7 +243,7 @@ func get_visible_paths():
 		visible_paths[\"NE\"] = [false,\"xxxx\"]
 
 	if star_link_e:
-		visible_paths[\"E\"] = [star_link_e.visible, star_system_w.system_name]
+		visible_paths[\"E\"] = [star_link_e.visible, star_system_e.system_name]
 	else:
 		visible_paths[\"E\"] = [false,\"xxxx\"]
 
@@ -218,12 +253,12 @@ func get_visible_paths():
 		visible_paths[\"W\"] = [false,\"xxxx\"]
 
 	if star_link_sw:
-		visible_paths[\"SW\"] = [star_link_sw.visible, star_system_se.system_name]
+		visible_paths[\"SW\"] = [star_link_sw.visible, star_system_sw.system_name]
 	else:
 		visible_paths[\"SW\"] = [false,\"xxxx\"]
 		
 	if star_link_se:
-		visible_paths[\"SE\"] = [star_link_se.visible, star_system_sw.system_name]
+		visible_paths[\"SE\"] = [star_link_se.visible, star_system_se.system_name]
 	else:
 		visible_paths[\"SE\"] = [false,\"xxxx\"]
 	

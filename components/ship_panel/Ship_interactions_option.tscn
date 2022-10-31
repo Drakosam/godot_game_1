@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://components/ship_panel/Tab_ship_actions.tscn" type="PackedScene" id=1]
+[ext_resource path="res://components/ship_panel/Tab_ship_movment.tscn" type="PackedScene" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TabContainer
+
+func _ready():
+	pass # Replace with function body.
+
+
+func set_ship(new_ship):
+	$Actions.set_ship(new_ship)
+	$Movment.set_ship(new_ship)
+
+"
+
+[node name="Ship_interactions_option" type="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+tab_align = 0
+script = SubResource( 1 )
+
+[node name="Actions" parent="." instance=ExtResource( 1 )]
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Movment" parent="." instance=ExtResource( 2 )]
+visible = false

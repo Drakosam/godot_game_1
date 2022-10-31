@@ -1,0 +1,159 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Tabs
+
+var current_ship = null
+
+
+var butt_NE = null
+var butt_NW = null
+var butt_W = null
+var butt_E = null
+var butt_SE = null
+var butt_SW = null
+
+
+func _ready():
+	butt_NE = $VBoxContainer/Move_NE
+	butt_NW = $VBoxContainer/Move_NW
+	butt_W = $VBoxContainer/Move_W
+	butt_E = $VBoxContainer/Move_E
+	butt_SE = $VBoxContainer/Move_SE
+	butt_SW = $VBoxContainer/Move_SW
+
+
+func act():
+	pass
+
+func set_ship(new_ship):
+	current_ship = new_ship
+
+
+#---------------------- NW
+func _on_Move_NW_pressed():
+	current_ship.move_to_system('NW')
+
+
+#---------------------- NE
+func _on_Move_NE_pressed():
+	current_ship.move_to_system('NE')
+
+
+#---------------------- W
+func _on_Move_W_pressed():
+	current_ship.move_to_system('W')
+
+
+#---------------------- E
+func _on_Move_E_pressed():
+	current_ship.move_to_system('E')
+
+
+#---------------------- SW
+func _on_Move_SW_pressed():
+	current_ship.move_to_system('SW')
+
+
+#---------------------- SE
+func _on_Move_SE_pressed():
+	current_ship.move_to_system('SE')
+
+
+#-------------------------------- cler mark path
+func _cler_paths():
+	if current_ship:
+		current_ship.clear_paths()
+
+
+func _refresh_buttons():
+	if current_ship:
+		var data = current_ship.get_system_visible_paths()
+		
+		butt_NE.visible = data['NE'][0]
+		butt_NE.text = data['NE'][1]
+		
+		butt_NW.visible = data['NW'][0]
+		butt_NW.text = data['NW'][1]
+		
+		butt_W.visible = data['W'][0]
+		butt_W.text = data['W'][1]
+		
+		butt_E.visible = data['E'][0]
+		butt_E.text = data['E'][1]
+		
+		butt_SW.visible = data['SW'][0]
+		butt_SW.text = data['SW'][1]
+		
+		butt_SE.visible = data['SE'][0]
+		butt_SE.text = data['SE'][1]
+
+
+func _on_Timer_timeout():
+	if current_ship:
+		_refresh_buttons()
+
+
+func _on_Tabs_visibility_changed():
+	if visible:
+		_refresh_buttons()
+		$Timer.start()
+	else:
+		$Timer.stop()
+"
+
+[node name="Tabs" type="Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Move_NW" type="Button" parent="VBoxContainer"]
+margin_right = 1024.0
+margin_bottom = 20.0
+text = "NW"
+
+[node name="Move_NE" type="Button" parent="VBoxContainer"]
+margin_top = 24.0
+margin_right = 1024.0
+margin_bottom = 44.0
+text = "NE"
+
+[node name="Move_W" type="Button" parent="VBoxContainer"]
+margin_top = 48.0
+margin_right = 1024.0
+margin_bottom = 68.0
+text = "W"
+
+[node name="Move_E" type="Button" parent="VBoxContainer"]
+margin_top = 72.0
+margin_right = 1024.0
+margin_bottom = 92.0
+text = "E"
+
+[node name="Move_SW" type="Button" parent="VBoxContainer"]
+margin_top = 96.0
+margin_right = 1024.0
+margin_bottom = 116.0
+text = "SW"
+
+[node name="Move_SE" type="Button" parent="VBoxContainer"]
+margin_top = 120.0
+margin_right = 1024.0
+margin_bottom = 140.0
+text = "SE"
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+
+[connection signal="visibility_changed" from="." to="." method="_on_Tabs_visibility_changed"]
+[connection signal="pressed" from="VBoxContainer/Move_NW" to="." method="_on_Move_NW_pressed"]
+[connection signal="pressed" from="VBoxContainer/Move_NE" to="." method="_on_Move_NE_pressed"]
+[connection signal="pressed" from="VBoxContainer/Move_W" to="." method="_on_Move_W_pressed"]
+[connection signal="pressed" from="VBoxContainer/Move_E" to="." method="_on_Move_E_pressed"]
+[connection signal="pressed" from="VBoxContainer/Move_SW" to="." method="_on_Move_SW_pressed"]
+[connection signal="pressed" from="VBoxContainer/Move_SE" to="." method="_on_Move_SE_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

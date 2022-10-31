@@ -6,8 +6,11 @@ script/source = "extends Node
 var SIZE_X = 5
 var SIZE_Y = 5
 
-var HIDE_INACTIVE_SYSTEMS = false
+var HIDE_INACTIVE_SYSTEMS = true
 var RANDOMIZE_SYSTEM_POSYTION = true
+
+var SYSTEM_NEXT_LINK_DIF_STEP = 65
+var SYSTEM_BASE_DIF = 200
 
 
 func _ready():

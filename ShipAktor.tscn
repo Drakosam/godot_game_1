@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Game_Setings.tscn" type="PackedScene" id=1]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -7,6 +9,11 @@ var ship_name = \"ship name\"
 var current_system = null
 var travel_to_system = null 
 var curent_action = 'idle'
+
+var move_direction = ''
+
+var task_progres = 100
+var task_threshold = 100
 
 
 func _ready():
@@ -31,47 +38,72 @@ func spown_ship(spown_system, ship_name_in=\"skip_name\"):
 	current_system = spown_system
 	ship_name = ship_name_in
 	
-
-func move_to_system(move_direction):
+	
+func _exec_move_to_system():
 	if move_direction == \"NW\" and current_system.star_system_nw:
 		current_system = current_system.star_system_nw
 		
-	if move_direction == \"NE\" and current_system.star_system_ne: 
+	elif move_direction == \"NE\" and current_system.star_system_ne: 
 		current_system = current_system.star_system_ne
 		
-	if move_direction == \"W\" and current_system.star_system_w: 
+	elif move_direction == \"W\" and current_system.star_system_w: 
 		current_system = current_system.star_system_w
 		
-	if move_direction == \"E\" and current_system.star_system_e: 
+	elif move_direction == \"E\" and current_system.star_system_e: 
 		current_system = current_system.star_system_e
 		
-	if move_direction == \"SW\" and current_system.star_system_sw: 
+	elif move_direction == \"SW\" and current_system.star_system_sw: 
 		current_system = current_system.star_system_sw
 		
-	if move_direction == \"SE\" and current_system.star_system_se: 
+	elif move_direction == \"SE\" and current_system.star_system_se: 
 		current_system = current_system.star_system_se
 	
+	move_direction = ''
+	
 	current_system.select_system()
+	
+func move_to_system(_move_direction):
+	move_direction = _move_direction
+	curent_action = 'move_to_next_system'
+	task_progres = 0
 
 
 func act():
 	if curent_action=='idle':
 		return
-	if curent_action == 'serch_for_star_routs':
-		if current_system:
-			current_system.system_discaver()
-			if current_system.link_known >= current_system.max_links:
-				set_ship_action_to_idle()
+	task_progres += 1
+	
+	if task_progres >= task_threshold:
+		if curent_action == 'serch_for_star_routs' :
+			if current_system:
+				current_system.system_discaver(0)
+				if current_system.link_known >= current_system.max_links:
+					set_ship_action_to_idle()
+		elif curent_action ==  'move_to_next_system':
+			_exec_move_to_system()
+			set_ship_action_to_idle()
+	
+	
+	if task_progres >= task_threshold and not curent_action =='idle':
+		task_progres = 0
 
 
+#******************************************************************************
+#******************** Ship Actions ********************************************
+#******************************************************************************
 func set_ship_action_to_idle():
+	task_progres = 100
 	curent_action = 'idle'
 
 
 func set_ship_action_to_serch_for_star_routs():
+	task_progres = 0
 	curent_action = 'serch_for_star_routs'
 
 
+#******************************************************************************
+#******************** Ship Syseem Information *********************************
+#******************************************************************************
 func get_system_name():
 	if current_system:
 		return current_system.system_name
@@ -85,3 +117,5 @@ func get_system_visible_paths():
 
 [node name="ShipAktor" type="Node"]
 script = SubResource( 1 )
+
+[node name="Game_Setings" parent="." instance=ExtResource( 1 )]

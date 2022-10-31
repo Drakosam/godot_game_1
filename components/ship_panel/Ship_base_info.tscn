@@ -1,0 +1,132 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Panel
+
+var current_ship = null
+
+var ship_name_label = null
+var system_name_label = null
+var task_name_label = null
+var progress_label = null
+
+func _ready():
+	ship_name_label = $VBoxContainer/HBoxContainer/Ship_name
+	system_name_label = $VBoxContainer/HBoxContainer2/System_name
+	task_name_label = $VBoxContainer/HBoxContainer3/Task_name
+	progress_label = $VBoxContainer/HBoxContainer4/Task_Progress
+
+
+func set_ship(new_ship):
+	current_ship = new_ship
+	_update_ship_info()
+
+func _update_ship_info():
+	ship_name_label.text = \":: \" + current_ship.ship_name
+	system_name_label.text = \":: \" + current_ship.get_system_name()
+	task_name_label.text = \":: \" + current_ship.curent_action
+	progress_label.text = \":: \" +str(current_ship.task_progres)+\" \\\\ \"+str(current_ship.task_threshold)
+	
+
+
+func _on_Timer_timeout():
+	if current_ship:
+		_update_ship_info()
+
+
+func _on_Ship_base_info_visibility_changed():
+	if visible:
+		$Timer.start()
+	else:
+		$Timer.stop()
+"
+
+[node name="Ship_base_info" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 1004.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_right = 120.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 120, 0 )
+text = "Ship name"
+valign = 1
+
+[node name="Ship_name" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_left = 124.0
+margin_right = 132.0
+margin_bottom = 14.0
+text = "::"
+valign = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 18.0
+margin_right = 1004.0
+margin_bottom = 32.0
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2"]
+margin_right = 120.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 120, 0 )
+text = "Current System"
+valign = 1
+
+[node name="System_name" type="Label" parent="VBoxContainer/HBoxContainer2"]
+margin_left = 124.0
+margin_right = 132.0
+margin_bottom = 14.0
+text = "::"
+valign = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 36.0
+margin_right = 1004.0
+margin_bottom = 50.0
+
+[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer3"]
+margin_right = 120.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 120, 0 )
+text = "Current Task"
+valign = 1
+
+[node name="Task_name" type="Label" parent="VBoxContainer/HBoxContainer3"]
+margin_left = 124.0
+margin_right = 132.0
+margin_bottom = 14.0
+text = "::"
+valign = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 54.0
+margin_right = 1004.0
+margin_bottom = 68.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer4"]
+margin_right = 120.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 120, 0 )
+text = "Task Progress"
+
+[node name="Task_Progress" type="Label" parent="VBoxContainer/HBoxContainer4"]
+margin_left = 124.0
+margin_right = 132.0
+margin_bottom = 14.0
+text = "::"
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+
+[connection signal="visibility_changed" from="." to="." method="_on_Ship_base_info_visibility_changed"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

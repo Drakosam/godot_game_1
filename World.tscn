@@ -30,14 +30,14 @@ func _ready():
 	board_size_y = $Game_Setings.SIZE_Y
 	
 	$StarSystemsMap.create_board(board_size_x,board_size_y)
-	#create_board(board_size_x,board_size_y)
 	
 	system_list = $StarSystemsMap.get_star_list()
 	star_systems_grid = $StarSystemsMap.get_star_grid()
 	
 	var start_system = star_systems_grid[floor(board_size_y/2) ][floor(board_size_x/2)]
 	start_system.make_active()
-	$Camera2D.position = start_system.position
+	$Camera2D.position.x = start_system.position.x + 175
+	$Camera2D.position.y = start_system.position.y
 	start_system.system_name = \"The Emperor's Haven\"
 	start_system.select_system()
 	
@@ -69,9 +69,10 @@ func _on_Sys_but_pressed():
 	$StarSystemsMap.visible = true
 
 func _on_Ship_but_pressed():
+	
 	_hide_panels()
 	$CanvasLayer/Ship_panel.visible = true
-	if ship_list.size()>0:
+	if ship_list.size() > 0:
 		$CanvasLayer/Ship_panel.set_ship(ship_list[0])
 
 
@@ -119,11 +120,7 @@ margin_left = -300.0
 
 [node name="Ship_panel" parent="CanvasLayer" instance=ExtResource( 1 )]
 visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
 margin_left = 50.0
-margin_right = 0.0
-margin_bottom = 0.0
 
 [node name="LeftMenu" type="Panel" parent="CanvasLayer"]
 anchor_bottom = 1.0
@@ -149,6 +146,11 @@ margin_right = 44.0
 margin_bottom = 92.0
 rect_min_size = Vector2( 0, 44 )
 text = "ship"
+
+[node name="VSeparator" type="VSeparator" parent="CanvasLayer"]
+anchor_bottom = 1.0
+margin_left = 49.0
+margin_right = 1.0
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
