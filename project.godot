@@ -16,7 +16,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-GameSetings="*res://Game_Setings.tscn"
+GameSetings="*res://GlobalEntities/Game_Setings.tscn"
+CargoEntities="*res://GlobalEntities/CargoEntities.tscn"
 
 [global]
 

@@ -20,6 +20,14 @@ func _on_Idle_Button_pressed():
 
 func _on_Serch_For_Star_Connection_Button_pressed():
 	current_ship.set_ship_action_to_serch_for_star_routs()
+
+
+func _on_Harvest_resources_pressed():
+	current_ship.harvest_resources()
+
+
+func _on_Sell_Cargo_pressed():
+	current_ship.remove_from_cargo('common resorce',600)
 "
 
 [node name="Tabs" type="Tabs"]
@@ -42,5 +50,19 @@ margin_right = 1024.0
 margin_bottom = 44.0
 text = "Search For Star Connection"
 
+[node name="Harvest_resources" type="Button" parent="VBoxContainer"]
+margin_top = 48.0
+margin_right = 1024.0
+margin_bottom = 68.0
+text = "Harvest resources"
+
+[node name="Sell_Cargo" type="Button" parent="VBoxContainer"]
+margin_top = 72.0
+margin_right = 1024.0
+margin_bottom = 92.0
+text = "Sell Cargo"
+
 [connection signal="pressed" from="VBoxContainer/Idle_Button" to="." method="_on_Idle_Button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Serch_For_Star_Connection_Button" to="." method="_on_Serch_For_Star_Connection_Button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Harvest_resources" to="." method="_on_Harvest_resources_pressed"]
+[connection signal="pressed" from="VBoxContainer/Sell_Cargo" to="." method="_on_Sell_Cargo_pressed"]

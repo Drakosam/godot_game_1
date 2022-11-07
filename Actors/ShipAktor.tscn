@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Game_Setings.tscn" type="PackedScene" id=1]
+[ext_resource path="res://GlobalEntities/Game_Setings.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Actors/CargoActor.tscn" type="PackedScene" id=2]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -15,9 +16,11 @@ var move_direction = ''
 var task_progres = 100
 var task_threshold = 100
 
+var cargo = null
+var site_number = -1
 
 func _ready():
-	pass 
+	cargo = $Cargo
 
 
 func clear_status():
@@ -79,6 +82,9 @@ func act():
 				current_system.system_discaver(0)
 				if current_system.link_known >= current_system.max_links:
 					set_ship_action_to_idle()
+		if curent_action == 'harvest_resources':
+			_harvest_resources()
+			
 		elif curent_action ==  'move_to_next_system':
 			_exec_move_to_system()
 			set_ship_action_to_idle()
@@ -101,9 +107,36 @@ func set_ship_action_to_serch_for_star_routs():
 	curent_action = 'serch_for_star_routs'
 
 
+func harvest_resources(_site = 0):
+	task_progres = 0
+	curent_action = 'harvest_resources'
+	site_number = _site
+
+
+func _harvest_resources():
+	var system_resurce =  current_system.harvest_resorce_from_system(site_number)
+	var rejected= $Cargo.add_to_cargo(system_resurce)
+	if rejected > 0:
+		set_ship_action_to_idle()
+		
+func remove_from_cargo(_name,_vale):
+	var value_recive = $Cargo.remove_from_cargo(_name,_vale)
+	print(value_recive)
+	curent_action = 'idle'
+
+
 #******************************************************************************
 #******************** Ship Syseem Information *********************************
 #******************************************************************************
+
+func get_cargo_size():
+	return $Cargo.get_cargo_size()
+	
+	
+func get_cargo_fill():
+	return $Cargo.get_cargo_fill()
+	
+
 func get_system_name():
 	if current_system:
 		return current_system.system_name
@@ -119,3 +152,5 @@ func get_system_visible_paths():
 script = SubResource( 1 )
 
 [node name="Game_Setings" parent="." instance=ExtResource( 1 )]
+
+[node name="Cargo" parent="." instance=ExtResource( 2 )]

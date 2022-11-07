@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var cargo_manifest = {}
+var cargo_item_list = []
+
+func _ready():
+	pass # Replace with function body.
+
+
+func get_cargo_size():
+	return 1000
+
+
+func get_cargo_fill():
+	var cargo_size = 0
+	
+	for item in cargo_item_list:
+		var volumen = cargo_manifest[item]
+		var data = _get_cargo_item_size(volumen, get_cargo_size())[0]
+
+		cargo_size += data['size']*data['count']
+	return cargo_size
+
+
+func add_to_cargo(cargo_items):
+	var reject_cargo = 0
+	for item in cargo_items:
+		var limt = get_cargo_size() - get_cargo_fill()
+		var new_cargo  = _get_cargo_item_size(item, limt)
+		if item['name'] in cargo_item_list:
+			cargo_manifest[item['name']]['count'] += new_cargo[0]['count'] 
+		else:
+			cargo_manifest[item['name']] = new_cargo[0]
+			cargo_item_list.append(item['name'])
+		
+		reject_cargo += new_cargo[1]
+			
+	return reject_cargo
+	
+func remove_from_cargo(cargo_name, cargo_volumen):
+	if cargo_name in cargo_item_list:
+		if cargo_manifest[cargo_name]['count'] > cargo_volumen:
+			cargo_manifest[cargo_name]['count'] -= cargo_volumen
+			return cargo_volumen
+		else:
+			var return_volumen = cargo_manifest[cargo_name]['count']
+			cargo_item_list.remove(cargo_name)
+			var temp = {}
+			for item in cargo_item_list:
+				temp[item] = cargo_manifest[item]
+			cargo_manifest = temp
+			print(cargo_manifest)
+			return return_volumen
+	return 0
+
+
+func _get_cargo_item_size(_item, _limit):
+	
+	if _item['size']*_item['count'] <= _limit:
+		return [_item,0]
+	
+	var count = int(_limit / _item['size'])
+	var reject_size = _item['size']*(_item['count']-count)
+	_item['count'] = count
+	return [_item, reject_size]
+"
+
+[node name="Cargo" type="Node"]
+script = SubResource( 1 )

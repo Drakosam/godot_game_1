@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+var entities_dict = {
+	\"common resorce\":
+		{
+			'val':1, 
+			'size':.2
+		}
+}
+
+func _ready():
+	pass # Replace with function body.
+
+func get_entiti_size(name):
+	var _name = name.to_lower()
+	if name in entities_dict:
+		return entities_dict[name]['size']
+	return 1
+	
+	
+func get_entiti_value(name):
+	var _name = name.to_lower()
+	if name in entities_dict:
+		return entities_dict[name]['val']
+	return 0
+"
+
+[node name="CargoEntities" type="Node"]
+script = SubResource( 1 )

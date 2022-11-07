@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GlobalEntities/CargoEntities.tscn" type="PackedScene" id=1]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Panel
@@ -8,13 +10,12 @@ var current_ship = null
 var ship_name_label = null
 var system_name_label = null
 var task_name_label = null
-var progress_label = null
+
 
 func _ready():
 	ship_name_label = $VBoxContainer/HBoxContainer/Ship_name
 	system_name_label = $VBoxContainer/HBoxContainer2/System_name
 	task_name_label = $VBoxContainer/HBoxContainer3/Task_name
-	progress_label = $VBoxContainer/HBoxContainer4/Task_Progress
 
 
 func set_ship(new_ship):
@@ -25,7 +26,11 @@ func _update_ship_info():
 	ship_name_label.text = \":: \" + current_ship.ship_name
 	system_name_label.text = \":: \" + current_ship.get_system_name()
 	task_name_label.text = \":: \" + current_ship.curent_action
-	progress_label.text = \":: \" +str(current_ship.task_progres)+\" \\\\ \"+str(current_ship.task_threshold)
+	$VBoxContainer/HBoxContainer4/WorkProgres.max_value = current_ship.task_threshold
+	$VBoxContainer/HBoxContainer4/WorkProgres.value = current_ship.task_progres 
+	
+	$VBoxContainer/HBoxContainer5/Cargo.max_value = current_ship.get_cargo_size()
+	$VBoxContainer/HBoxContainer5/Cargo.value = current_ship.get_cargo_fill()
 	
 
 
@@ -45,6 +50,8 @@ func _on_Ship_base_info_visibility_changed():
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = SubResource( 1 )
+
+[node name="CargoEntities" parent="." instance=ExtResource( 1 )]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -119,11 +126,28 @@ margin_bottom = 14.0
 rect_min_size = Vector2( 120, 0 )
 text = "Task Progress"
 
-[node name="Task_Progress" type="Label" parent="VBoxContainer/HBoxContainer4"]
+[node name="WorkProgres" type="ProgressBar" parent="VBoxContainer/HBoxContainer4"]
 margin_left = 124.0
-margin_right = 132.0
+margin_right = 324.0
 margin_bottom = 14.0
-text = "::"
+rect_min_size = Vector2( 200, 0 )
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 72.0
+margin_right = 1004.0
+margin_bottom = 86.0
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer5"]
+margin_right = 120.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 120, 0 )
+text = "Cargo"
+
+[node name="Cargo" type="ProgressBar" parent="VBoxContainer/HBoxContainer5"]
+margin_left = 124.0
+margin_right = 324.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 200, 0 )
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5

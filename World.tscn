@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Ship_panel.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Star_System_panel.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Game_Setings.tscn" type="PackedScene" id=3]
+[ext_resource path="res://GlobalEntities/Game_Setings.tscn" type="PackedScene" id=3]
 [ext_resource path="res://StarSystemsMap.tscn" type="PackedScene" id=4]
 
 [sub_resource type="GDScript" id=1]
@@ -11,7 +11,7 @@ script/source = "extends Node2D
 
 var StarSystam = preload(\"res://StarSystem.tscn\")
 var StarLink = preload(\"res://StarLink.tscn\")
-var ShipAktor = preload(\"res://ShipAktor.tscn\")
+var ShipAktor = preload(\"res://Actors/ShipAktor.tscn\")
 
 var system_list = []
 var star_systems_grid=[]
@@ -117,10 +117,12 @@ script = SubResource( 2 )
 [node name="Star_System_panel" parent="CanvasLayer" instance=ExtResource( 2 )]
 anchor_left = 1.0
 margin_left = -300.0
+margin_top = 50.0
 
 [node name="Ship_panel" parent="CanvasLayer" instance=ExtResource( 1 )]
 visible = false
 margin_left = 50.0
+margin_top = 50.0
 
 [node name="LeftMenu" type="Panel" parent="CanvasLayer"]
 anchor_bottom = 1.0
@@ -151,6 +153,18 @@ text = "ship"
 anchor_bottom = 1.0
 margin_left = 49.0
 margin_right = 1.0
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+anchor_right = 1.0
+margin_left = 51.0
+margin_bottom = 50.0
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/Panel"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -2.0
+margin_bottom = 1.0
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
